@@ -1,5 +1,5 @@
 {
-  "name": "auth-api",
+  "name": "items-api",
   "version": "1.0.0",
   "main": "src/server.js",
   "scripts": {
@@ -7,9 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
     "express": "^4.19.2",
-    "jsonwebtoken": "^9.0.2",
     "pg": "^8.12.0"
   },
   "devDependencies": {
