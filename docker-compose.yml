@@ -1,0 +1,77 @@
+services:
+  proxy:
+    build: ./proxy
+    image: nufindit/proxy:${TAG:-dev}
+    ports:
+      - "8080:80"
+    depends_on:
+      - frontend
+      - items-api
+      - auth-api
+    restart: unless-stopped
+    networks: [nufindit-net]
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        BUILD_NUMBER: ${TAG:-dev}
+    image: nufindit/frontend:${TAG:-dev}
+    restart: unless-stopped
+    networks: [nufindit-net]
+
+  items-api:
+    build:
+      context: ./items-api
+      target: production
+    image: nufindit/items-api:${TAG:-dev}
+    environment:
+      DB_HOST: db
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks: [nufindit-net]
+
+  auth-api:
+    build:
+      context: ./auth-api
+      target: production
+    image: nufindit/auth-api:${TAG:-dev}
+    environment:
+      DB_HOST: db
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks: [nufindit-net]
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks: [nufindit-net]
+
+volumes:
+  db-data:
+
+networks:
+  nufindit-net:

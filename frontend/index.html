@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NUFindIt</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 700px; margin: 30px auto; padding: 0 15px; }
+    input, button { padding: 8px; margin: 4px 0; width: 100%; box-sizing: border-box; }
+    button { background: #2c4a9a; color: #fff; border: 0; cursor: pointer; }
+    .item { border: 1px solid #ccc; border-radius: 6px; padding: 10px; margin: 8px 0; }
+    footer { margin-top: 30px; color: #777; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <h1>NUFindIt: Lost and Found</h1>
+
+  <h3>Post an item</h3>
+  <input id="name" placeholder="Item name">
+  <input id="category" placeholder="Category">
+  <input id="location" placeholder="Location found">
+  <input id="description" placeholder="Description">
+  <input id="postedBy" placeholder="Your name">
+  <button onclick="addItem()">Post</button>
+
+  <h3>Items</h3>
+  <div id="list">Loading...</div>
+
+  <footer>Build: __BUILD__</footer>
+
+  <script>
+    function esc(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    async function load() {
+      try {
+        const res = await fetch('/api/items/items');
+        const items = await res.json();
+        document.getElementById('list').innerHTML = items.length
+          ? items.map(i => '<div class="item"><b>' + esc(i.name) + '</b> (' + esc(i.category) + ')<br>' +
+              esc(i.location) + '<br>' + esc(i.description) + '<br><small>by ' + esc(i.postedBy) + '</small></div>').join('')
+          : 'No items yet.';
+      } catch (e) {
+        document.getElementById('list').textContent = 'Could not load items.';
+      }
+    }
+    async function addItem() {
+      const body = {};
+      ['name', 'category', 'location', 'description', 'postedBy'].forEach(k => body[k] = document.getElementById(k).value);
+      const res = await fetch('/api/items/items', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (res.ok) {
+        ['name','category','location','description'].forEach(k => document.getElementById(k).value = '');
+        load();
+      } else {
+        alert('Please fill in name, category, location and your name.');
+      }
+    }
+    load();
+  </script>
+</body>
+</html>

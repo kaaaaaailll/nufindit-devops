@@ -13,7 +13,7 @@ ENV NODE_ENV=production
 COPY package*.json ./
 RUN npm ci --omit=dev
 COPY --from=base /app/src ./src
-EXPOSE 3001
-HEALTHCHECK --interval=15s --timeout=3s CMD wget -qO- http://localhost:3001/health || exit 1
+EXPOSE 3000
+HEALTHCHECK --interval=15s --timeout=3s CMD wget -qO- http://localhost:3000/health || exit 1
 USER node
 CMD ["node", "src/server.js"]
