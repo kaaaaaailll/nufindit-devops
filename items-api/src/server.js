@@ -1,6 +1,11 @@
 const { Pool } = require('pg');
 const { createApp } = require('./app');
 
+if (!process.env.JWT_SECRET) {
+  console.error('JWT_SECRET is not set');
+  process.exit(1);
+}
+
 const pool = new Pool({
   host: process.env.DB_HOST || 'db',
   port: process.env.DB_PORT || 5432,
@@ -11,20 +16,18 @@ const pool = new Pool({
 
 async function init() {
   await pool.query(`
-    CREATE TABLE IF NOT EXISTS items (
+    CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
-      name TEXT NOT NULL,
-      category TEXT NOT NULL,
-      location TEXT NOT NULL,
-      description TEXT DEFAULT '',
-      posted_by TEXT NOT NULL,
+      username TEXT UNIQUE NOT NULL,
+      password_hash TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'student',
       created_at TIMESTAMP DEFAULT NOW()
     )`);
 }
 
 init()
   .then(() => {
-    createApp(pool).listen(3000, () => console.log('items-api listening on 3000'));
+    createApp(pool, process.env.JWT_SECRET).listen(3001, () => console.log('auth-api listening on 3001'));
   })
   .catch((err) => {
     console.error('Failed to start', err);
