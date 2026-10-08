@@ -50,9 +50,9 @@ pipeline {
       steps {
         sh '''
           for i in $(seq 1 20); do
-            if docker compose exec -T proxy wget -qO- http://localhost/ | grep -q "Build: $TAG" \
-               && docker compose exec -T proxy wget -qO- http://localhost/api/items/health > /dev/null \
-               && docker compose exec -T proxy wget -qO- http://localhost/api/auth/health > /dev/null; then
+            if docker compose exec -T proxy wget -qO- http://127.0.0.1/ | grep -q "Build: $TAG" \
+               && docker compose exec -T proxy wget -qO- http://127.0.0.1/api/items/health > /dev/null \
+               && docker compose exec -T proxy wget -qO- http://127.0.0.1/api/auth/health > /dev/null; then
               echo "Smoke test passed"; exit 0
             fi
             echo "Waiting for services... ($i)"; sleep 5
@@ -64,7 +64,7 @@ pipeline {
   }
 
   post {
-    success { echo "NUFindIt build ${TAG} is live at http://localhost:8080" }
+    success { echo "NUFindIt build ${TAG} is live at http://127.0.0.1:8080" }
     failure { echo "Build ${TAG} failed. Roll back with: TAG=<previous> docker compose -p nufindit-devops up -d --no-build" }
     always  { sh 'rm -f .env' }
   }
