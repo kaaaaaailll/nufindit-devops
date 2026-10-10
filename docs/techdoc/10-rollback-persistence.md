@@ -26,7 +26,7 @@ All five containers are running and healthy on build 22. The only published port
 
 ## 10.4 Data persistence proof
 The database files live in the named volume db-data, not inside the container. We tested persistence in three ways, without ever using the -v option:
-- Redeployment by Jenkins: items posted earlier were still listed after every new build (#7, #9, #22).
+- Redeployment by Jenkins: items posted earlier were still listed after new builds were deployed (for example build #7).
 - Restart: `docker compose -p nufindit-devops down` followed by `docker compose -p nufindit-devops up -d` kept all items.
 - Rollback: the db container was not recreated, so its data was untouched.
 
@@ -40,4 +40,5 @@ The Jenkins build list and Stage View show the failed build #8 (quality gate) fo
 ![Jenkins build list](../screenshots/01-jenkins-build-list.png)
 
 ![Jenkins Stage View](../screenshots/01b-jenkins-stage-view.png)
+
 

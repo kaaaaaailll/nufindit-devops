@@ -11,7 +11,6 @@ Contributions are taken from the Git history of the repository.
 | Mallari, Ian Rose C. | Backend and Database Engineer | 1 (IanMallari) | Added the items-api validation test (validation.test.js) |
 | Flores, Nicole James B. | Frontend, QA, and Documentation Lead | 3 (JamesFlores17) | Wrote testing notes (docs/testing-notes.md, later removed from the repository) |
 
-Other contributions that are not commits (meetings, reviews, testing, slides): [FILL IN per member or delete this line]
 
 ## 12.2 Team process
 - One shared public repository on GitHub: https://github.com/kaaaaaailll/nufindit-devops (branch main).
