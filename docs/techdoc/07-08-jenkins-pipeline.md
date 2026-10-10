@@ -76,6 +76,7 @@ Note: the smoke test uses 127.0.0.1 and not localhost. wget resolved localhost t
 | #20 | Build triggered again | Passed |
 | #21 | Deploy stage hit "removal of container already in progress" | Failed at Deploy |
 | #22 | After adding the retry to the Deploy stage | Passed. Rollback to build 18 and back to 22 tested |
+| #23 | Push of the technical documentation (docs only) | Started automatically by Poll SCM. Passed |
 
 ![Jenkins Stage View](../screenshots/01b-jenkins-stage-view.png)
 ![Jenkins build list](../screenshots/01-jenkins-build-list.png)
@@ -90,3 +91,4 @@ If the first attempt succeeds, nothing changes. If it fails, the stage waits 10 
 
 ## 8.6 Build #19 (laptop sleep)
 Build #19 hung for almost 9 hours because the laptop went to sleep during the run. We aborted it and ran the pipeline again (#20). Windows sleep is turned off before demos.
+
