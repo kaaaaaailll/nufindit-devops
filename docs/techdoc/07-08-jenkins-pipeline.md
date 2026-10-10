@@ -53,7 +53,7 @@ Mounting the Docker socket and running as root gives Jenkins full control of the
 | Checkout | checkout scm pulls the repository, then prints the latest commit with git log -1 --oneline | Pipeline stops, nothing changes |
 | Test | docker build --target test for items-api and auth-api. The test stage of each Dockerfile runs the Jest tests | Build fails here. Build Images, Deploy and Smoke Test are skipped, so the running site keeps the previous version |
 | Build Images | Loads the nufindit-env secret file as .env, then runs docker compose build. Images get the build number tag | Stops before Deploy. The old containers keep running |
-| Deploy | docker compose up -d --no-build --remove-orphans replaces the containers with the new images. The db-data volume is kept | Stage fails. The post section prints the rollback command |
+| Deploy | docker compose up -d --no-build --remove-orphans replaces the containers with the new images. If the command fails, it waits 10 seconds and runs it once more (see 8.5). The db-data volume is kept | If the retry also fails, the stage fails and the post section prints the rollback command |
 | Smoke Test | Up to 20 tries, 5 seconds apart. Inside the proxy container it fetches http://127.0.0.1/ and checks that the page contains "Build: <TAG>", then calls /api/items/health and /api/auth/health | After 20 tries it prints "Smoke test failed" and exits 1 |
 
 Note: the smoke test uses 127.0.0.1 and not localhost. wget resolved localhost to IPv6, while nginx listens on IPv4 only, which caused "Connection refused".
@@ -71,6 +71,22 @@ Note: the smoke test uses 127.0.0.1 and not localhost. wget resolved localhost t
 | #7 | Pushed a heading change "(v2)" | Started automatically by Poll SCM. Footer showed Build: 7. Earlier items still listed |
 | #8 | Pushed a deliberately failing test (items-api/tests/break.test.js) | Failed at Test. Deploy skipped. Site stayed on Build 7 |
 | #9 | Removed the failing test | Passed. Footer showed Build: 9 |
+| #10 to #18 | Later pushes (README, diagram, docs and fixes) | Passed |
+| #19 | Build started while the laptop was asleep | Hung for almost 9 hours. Aborted |
+| #20 | Build triggered again | Passed |
+| #21 | Deploy stage hit "removal of container already in progress" | Failed at Deploy |
+| #22 | After adding the retry to the Deploy stage | Passed. Rollback to build 18 and back to 22 tested |
 
-[Insert screenshot: Jenkins Stage View showing #8 failed and #9 passed]
-[Insert screenshot: Jenkins build list]
+![Jenkins Stage View](../screenshots/01b-jenkins-stage-view.png)
+![Jenkins build list](../screenshots/01-jenkins-build-list.png)
+
+
+## 8.5 Deploy retry
+Build #21 failed at Deploy with "removal of container ... already in progress". Docker was still removing the old container when Compose tried to recreate it. The Deploy stage is now:
+
+`docker compose up -d --no-build --remove-orphans || { echo "Deploy retry after 10s"; sleep 10; docker compose up -d --no-build --remove-orphans; }`
+
+If the first attempt succeeds, nothing changes. If it fails, the stage waits 10 seconds and tries once more. A real failure still fails the stage on the second attempt. Build #22 passed with this change.
+
+## 8.6 Build #19 (laptop sleep)
+Build #19 hung for almost 9 hours because the laptop went to sleep during the run. We aborted it and ran the pipeline again (#20). Windows sleep is turned off before demos.
