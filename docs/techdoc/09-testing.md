@@ -31,7 +31,7 @@ The Test stage runs before Build Images, Deploy and Smoke Test. If npm test fail
 
 **Proof (build #8):** we pushed a deliberately failing test (items-api/tests/break.test.js). Jenkins started automatically, failed at the Test stage, and skipped Build Images, Deploy and Smoke Test. The website stayed on Build 7. After the test file was removed, build #9 passed and the site moved to Build 9.
 
-[Insert screenshot: Stage View with build #8 failing at Test]
+![Jenkins build list: build #8 failed (quality gate), build #9 passed after the failing test was removed](../screenshots/01-jenkins-build-list.png)
 
 ## 9.5 Smoke test after deployment
 After Deploy, the Smoke Test stage runs inside the proxy container. It tries up to 20 times, 5 seconds apart, and passes only when all three checks succeed:
@@ -45,3 +45,4 @@ This tests the real path through the reverse proxy to both APIs. If it never pas
 - The unit tests mock the database, so the real SQL and the connection to PostgreSQL are covered only indirectly, by the smoke test and the health checks.
 - The frontend and the proxy have no automated tests. The smoke test covers them.
 - Possible improvements: an integration test against a real test database, and a linter such as ESLint in the Test stage.
+

@@ -92,3 +92,5 @@ If the first attempt succeeds, nothing changes. If it fails, the stage waits 10 
 ## 8.6 Build #19 (laptop sleep)
 Build #19 hung for almost 9 hours because the laptop went to sleep during the run. We aborted it and ran the pipeline again (#20). Windows sleep is turned off before demos.
 
+
+Note: Jenkins keeps only the last 15 builds (buildDiscarder). Builds #8 and #9 were removed from the Stages page later, but the build list screenshot above was taken while they were still shown.
