@@ -42,7 +42,7 @@ pipeline {
 
     stage('Deploy') {
       steps {
-        sh 'docker compose up -d --no-build --remove-orphans'
+        sh 'docker compose up -d --no-build --remove-orphans || { echo "Deploy retry after 10s"; sleep 10; docker compose up -d --no-build --remove-orphans; }'
       }
     }
 
