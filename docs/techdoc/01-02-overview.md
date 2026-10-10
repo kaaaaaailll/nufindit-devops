@@ -2,7 +2,7 @@
 
 **Project:** NUFindIt (Lost-and-Found Board)
 **Course:** BSIT ITE 301, System Architecture and Integration
-**Group name:** [FILL IN GROUP NAME]
+**Group name:** NUFindIt Team
 **Repository:** https://github.com/kaaaaaailll/nufindit-devops
 
 ## 1. Team Members and Roles
@@ -29,3 +29,4 @@ NUFindIt is a small lost-and-found board where users register, log in, and post 
 | jenkins | Separate Compose stack in infra/jenkins/. Runs the CI/CD pipeline. UI at http://localhost:8081. | 8080 (mapped to 8081) |
 
 All application modules share one user-defined Docker network (nufindit-net). Only the proxy is reachable from outside; the APIs and the database are not exposed to the host.
+
