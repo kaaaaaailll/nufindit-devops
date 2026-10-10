@@ -30,9 +30,9 @@ The database files live in the named volume db-data, not inside the container. W
 - Restart: `docker compose -p nufindit-devops down` followed by `docker compose -p nufindit-devops up -d` kept all items.
 - Rollback: the db container was not recreated, so its data was untouched.
 
-![Items in the application](../screenshots/03-browser-a.png)
+![Application on build 22, before the rollback: items listed, footer Build: 22](../screenshots/03-browser-a.png)
 
-![Same items after redeployment](../screenshots/04-browser-b.png)
+![Application after the rollback to build 18: the same items are listed, footer Build: 18](../screenshots/04-browser-b.png)
 
 ## 10.5 Pipeline history
 The Jenkins build list and Stage View show the failed build #8 (quality gate) followed by green builds.
@@ -40,3 +40,4 @@ The Jenkins build list and Stage View show the failed build #8 (quality gate) fo
 ![Jenkins build list](../screenshots/01-jenkins-build-list.png)
 
 ![Jenkins Stage View](../screenshots/01b-jenkins-stage-view.png)
+
